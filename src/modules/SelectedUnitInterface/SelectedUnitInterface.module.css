@@ -1,0 +1,15 @@
+.SelectedUnitInterface {
+    height: 100%;
+    border-right: solid 1px var(--border-color);
+    flex-shrink: 0;
+    position: relative;
+    user-select: none;
+}
+
+.DraggableArea {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 3px;
+    cursor: w-resize;
+}

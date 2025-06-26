@@ -1,0 +1,13 @@
+.WorkPage {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.Main {
+    flex-shrink: 0;
+}
+
+.Canvas {
+    width: 100%;
+}

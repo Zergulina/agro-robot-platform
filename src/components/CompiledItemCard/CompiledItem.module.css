@@ -1,0 +1,11 @@
+.CompiledItemCard {
+    border: solid 1px var(--border-color);
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.ButtonPanel {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}

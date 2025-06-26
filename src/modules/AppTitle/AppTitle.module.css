@@ -1,0 +1,119 @@
+.AppTitle {
+    position: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    width: 100vw;
+    height: 35px;
+
+    background-color: var(--panel-color);
+    border-bottom: solid 1px var(--border-color);
+    z-index: 998;
+}
+
+.Left {
+    display: flex;
+    width: 50vw;
+    justify-content: flex-start;
+    background-color: inherit;
+    align-items: center;
+}
+
+.Right {
+    display: flex;
+    width: 50vw;
+    justify-content: flex-end;
+    background-color: inherit;
+    align-items: center;
+}
+
+.AppTitleMaximized {
+    margin-top: -1px;
+}
+
+.Icon {
+    height: 35px;
+    width: 45px;
+    padding: 10px 0;
+    color: var(--titlebar-icon-color);
+    z-index: 1000;
+    margin-bottom: 1px;
+}
+
+.Icon:hover {
+    background-color: var(--titlebar-icon-hover-background-color);
+}
+
+.Icon.Quit:hover {
+    background-color: var(--titlebar-icon-quit-hover-background-color);
+}
+
+.TitleMenuItem {
+    padding: 2px;
+    margin: 0 3px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.TitleMenuItem:hover {
+    background-color: var(--titlebar-icon-hover-background-color);
+}
+
+.MenuButtonWrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.MenuButton {
+    outline: 0;
+    border: 0;
+}
+
+.FileMenuPanel {
+    position: absolute;
+    left: 0;
+    top: 35px;
+    height: 50px;
+    width: 150px;
+    background-color: var(--panel-color);
+    border-right: solid 1px var(--border-color);
+    border-bottom: solid 1px var(--border-color);
+    padding: 5px 0;
+    z-index: 9999;
+}
+
+.InstrumentMenuPanel {
+    position: absolute;
+    left: 50px;
+    top: 35px;
+    width: 200px;
+    background-color: var(--panel-color);
+    border-left: solid 1px var(--border-color);
+    border-right: solid 1px var(--border-color);
+    border-bottom: solid 1px var(--border-color);
+    padding: 5px 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.MenuPanelItem {
+    margin-left: 5px;
+    outline: 0;
+    border: 0;
+    padding: 2px;
+    width: fit-content;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.MenuPanelItem:hover {
+    background-color: var(--titlebar-icon-hover-background-color);
+}
