@@ -59,7 +59,7 @@ const AppTitle: React.FC = () => {
                     >
                         <div className={classes.InstrumentMenuPanel}>
                             <button className={classes.MenuPanelItem} onClick={() => {
-                                const w = new WebviewWindow('unique-label', {
+                                const w = new WebviewWindow('optional', {
                                     url: 'optional/sketch-manager',
                                     width: 600, height: 400,
                                     decorations: false,

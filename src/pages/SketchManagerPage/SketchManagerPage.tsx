@@ -13,29 +13,6 @@ import { useNavigate } from 'react-router-dom';
 import { getAllSketchesFullInfo } from '../../api/sketch/getAllSketchesFullInfo';
 import { deleteSketchById } from '../../api/sketch/deleteSketchById';
 
-// const cards: SketchFullInfo[] = [
-//     {
-//         id: 1,
-//         name: "Aboba",
-//         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-//         file_name: "Aboba.ino",
-//         params: [{
-//             id: 1,
-//             name: "Писющка",
-//             macros_name: "PISUN",
-//             regex: "",
-//             default_value: "",
-//             value_list: [{
-//                 id: 1,
-//                 value: "Я ебал"
-//             }]
-//         }],
-//         procedures: [],
-//         datas: [],
-//     },
-
-// ]
-
 const SketchManagerPage: React.FC = () => {
     const {setNewSketch} = useNewSketch();
     const navigate = useNavigate();

@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import classes from './SelectedUnitInterface.module.css';
 import { DrawUnit } from '../../types/nodes/primitives/DrawUnit';
 import { MicroController } from '../../types/nodes/MicroController';
+import AccentButton from '../../ui/buttons/AccentButton/AccentButton';
+import { useMicroController } from '../../storage/SelectedMicroControllerProvider';
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 type SelectedUnitInterfaceProps = {
     width: number,
@@ -11,22 +14,12 @@ type SelectedUnitInterfaceProps = {
 
 const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, setIsDragging, selectedNodeUnit }) => {
     const [interfaceData, setInterfaceData] = useState<any>({});
-
-    const fileInputRef = useRef<HTMLInputElement | null>(null)
+    const { microController, setMicroController } = useMicroController();
 
     useEffect(() => {
         if (selectedNodeUnit instanceof MicroController) {
-            setInterfaceData({ sketch: selectedNodeUnit.sketch, codeParams: selectedNodeUnit.codeParams })
-            if (!fileInputRef.current?.files) return
-            if (selectedNodeUnit.sketch) {
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(selectedNodeUnit.sketch);
-                fileInputRef.current.files = dataTransfer.files;
-            } else {
-                const dataTransfer = new DataTransfer();
-                fileInputRef.current.files = dataTransfer.files;
-            }
-
+            setInterfaceData({})
+            setMicroController(selectedNodeUnit);
         }
         else {
             setInterfaceData({});
@@ -46,24 +39,22 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                 {
                     selectedNodeUnit instanceof MicroController ?
                         <div>
-                            <input type="file" ref={fileInputRef} onChange={e => {
-                                selectedNodeUnit.sketch = e.target.files ? e.target.files[0] : null
-                                console.log(selectedNodeUnit.codeParams);
-                                setInterfaceData({ ...interfaceData, file: e.target.files ? e.target.files[0] : null, codeParams: selectedNodeUnit.codeParams });
-                            }} />
+                            <h3>Выбранный скетч</h3>
+                            <AccentButton onClick={() => {
+                                const w = new WebviewWindow('optional', {
+                                    url: 'optional/sketch-manager/select',
+                                    width: 600, height: 400,
+                                    decorations: false,
+                                });
+
+                                w.once('tauri://created', () => console.log('OK'));
+                                w.once('tauri://error', e => console.error(e));
+                            }}>
+                                Выбрать скетч
+                            </AccentButton>
                             <div>
                                 <h4>Параметры</h4>
-                                {
-                                    interfaceData.codeParams && interfaceData.codeParams.map((codeParam: any, index: number) =>
-                                        <div key={codeParam.macrosName}>
-                                            {codeParam.name}: <input value={codeParam.value} onChange={e => {
-                                                const newCodeParams = [...interfaceData.codeParams];
-                                                newCodeParams[index].value = e.target.value;
-                                                setInterfaceData({...interfaceData, codeParams: newCodeParams})}
-                                            }/>
-                                        </div>
-                                    )
-                                }
+
                             </div>
                         </div>
                         :

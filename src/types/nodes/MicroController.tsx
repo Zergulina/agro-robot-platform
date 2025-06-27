@@ -1,4 +1,4 @@
-import { SketchData, SketchFullInfo, SketchInfo, SketchParam, SketchProcedure } from "../api/sketch";
+import { MicroControllerSketch, SketchData, SketchParam, SketchProcedure } from "../api/sketch";
 import { ClickType } from "./ClickType";
 import { Connector } from "./primitives/Connector";
 import { ClickResponse, DrawUnit } from "./primitives/DrawUnit";
@@ -36,7 +36,7 @@ export class MicroController extends DrawUnit {
         }
     }
 
-    private _height: number;
+    private _height: number = 240;
 
     get isSelected(): boolean {
         return this._isSelected;
@@ -56,37 +56,27 @@ export class MicroController extends DrawUnit {
     private _sketchProcedures: SketchProcedure[] = [];
     private _sketchDatas: SketchData[] = [];
 
-    // setSketch(sketch: ) {
-    //     this._sketchName = sketch.name;
-    //     this._sketchCode = sketch.code
-    // }
+    setSketch(sketch: MicroControllerSketch) {
+        this._sketchName = sketch.name;
+        this._sketchCode = sketch.code
+
+        this._sketchParams = sketch.params;
+        this._sketchProcedures = sketch.procedures;
+        this._sketchDatas = sketch.datas;
+
+        let height = 240;
+
+        const maxConnectorsLength = Math.max(this._sketchProcedures.map(procedure => procedure.args).length, this._sketchDatas.length);
+        if (maxConnectorsLength > 6) {
+            height = maxConnectorsLength * 2 * 20;
+        }
+
+        this._height = height;
+    }
 
     constructor(position: Position) {
         super();
         this.position = position;
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-        this._inConnectors.push(new Connector({ x: 0, y: 0 }, true));
-
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-        this._outConnectors.push(new Connector({ x: 0, y: 0 }, false));
-
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -99,16 +89,8 @@ export class MicroController extends DrawUnit {
             ctx.lineWidth = 1.5;
         }
 
-        let height = 240;
-
-        const maxConnectorsLength = Math.max(this._inConnectors.length, this._outConnectors.length);
-
-        if (maxConnectorsLength > 6) {
-            height = maxConnectorsLength * 2 * 20;
-        }
-
-        ctx.fillRect(this.position.x - 100, this.position.y - height / 2, 200, height);
-        ctx.strokeRect(this.position.x - 100, this.position.y - height / 2, 200, height);
+        ctx.fillRect(this.position.x - 100, this.position.y - this._height / 2, 200, this._height);
+        ctx.strokeRect(this.position.x - 100, this.position.y - this._height / 2, 200, this._height);
 
         for (let inConnector of this._inConnectors) {
             inConnector.draw(ctx);
@@ -117,14 +99,13 @@ export class MicroController extends DrawUnit {
         for (let outConnector of this._outConnectors) {
             outConnector.draw(ctx);
         }
-
         
         ctx.strokeStyle = "000";
         ctx.fillStyle = "000";
         ctx.beginPath();
-        ctx.moveTo(this.position.x - 65, this.position.y - height / 2 + 15);
-        ctx.lineTo(this.position.x + 65, this.position.y - height / 2 + 15);
-        ctx.lineTo(this.position.x, this.position.y - height / 2 + 75);
+        ctx.moveTo(this.position.x - 65, this.position.y - this._height / 2 + 15);
+        ctx.lineTo(this.position.x + 65, this.position.y - this._height / 2 + 15);
+        ctx.lineTo(this.position.x, this.position.y - this._height / 2 + 75);
         ctx.closePath();
         ctx.fill();
     }

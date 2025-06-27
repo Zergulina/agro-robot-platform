@@ -7,8 +7,7 @@ use std::{env, fs};
 use rfd::FileDialog;
 
 use crate::dtos::{
-    CreateSketchRequest, NewSketchFile, SketchDataResponse, SketchFullInfo, SketchParamResponse,
-    SketchParamValueResponse, SketchProcedureArgResponse, SketchProcedureResponse,
+    CreateSketchRequest, MicroControllerSketch, NewSketchFile, SketchDataResponse, SketchFullInfo, SketchParamResponse, SketchParamValueResponse, SketchProcedureArgResponse, SketchProcedureResponse
 };
 use crate::models::{SketchData, SketchProcedureArg};
 use crate::repository::sqlite::repositories::{self, sketch_repository};
@@ -52,7 +51,6 @@ fn create_sketch(
     )
     .or(Err("Ошибка при добавлении скетча"))?;
     for sketch_param in create_sketch_request.params {
-
         let sketch_param_id = repositories::sketch_param_repository::create(
             &models::SketchParam {
                 id: 0,
@@ -230,12 +228,107 @@ fn get_all_sketches_full_info(
 }
 
 #[tauri::command]
-fn delete_sketch_by_id(
-    id: i64,
-    connection_str: tauri::State<DbConnection>,
-) -> Result<(), String> {
+fn delete_sketch_by_id(id: i64, connection_str: tauri::State<DbConnection>) -> Result<(), String> {
     sketch_repository::delete(id, connection_str.0.as_str()).or(Err("Ошибка удаления скетча"))?;
     Ok(())
+}
+
+#[tauri::command]
+fn get_micro_controller_sketch_by_id(
+    id: i64,
+    connection_str: tauri::State<DbConnection>,
+) -> Result<MicroControllerSketch, String> {
+    let sketch = sketch_repository::get_by_id(id, connection_str.0.as_str())
+        .or(Err("Ошибка получения скеча"))?;
+
+    let mut sketch_param_responses: Vec<SketchParamResponse> =
+        repositories::sketch_param_repository::get_by_sketch_id(
+            sketch.id,
+            connection_str.0.as_str(),
+        )
+        .unwrap()
+        .iter()
+        .map(|param| SketchParamResponse {
+            id: param.id,
+            macros_name: param.macros_name.clone(),
+            default_value: param.default_value.clone(),
+            name: param.name.clone(),
+            regex: param.regex.clone(),
+            value_list: Vec::<dtos::SketchParamValueResponse>::new(),
+        })
+        .collect();
+
+    sketch_param_responses.iter_mut().for_each(|sketch_param| {
+        sketch_param.value_list = repositories::sketch_param_value_repository::get_by_param_id(
+            sketch_param.id,
+            connection_str.0.as_str(),
+        )
+        .unwrap()
+        .iter()
+        .map(|value| SketchParamValueResponse {
+            id: value.id,
+            value: value.value.clone(),
+        })
+        .collect();
+    });
+
+    let mut sketch_procedure_responses: Vec<SketchProcedureResponse> =
+        repositories::sketch_procedure_repository::get_by_sketch_id(
+            sketch.id,
+            connection_str.0.as_str(),
+        )
+        .unwrap()
+        .iter()
+        .map(|procedure| SketchProcedureResponse {
+            id: procedure.id,
+            name: procedure.name.clone(),
+            procedure_name: procedure.procedure_name.clone(),
+            args: Vec::<SketchProcedureArgResponse>::new(),
+        })
+        .collect();
+
+    sketch_procedure_responses
+        .iter_mut()
+        .for_each(|sketch_procedure| {
+            sketch_procedure.args =
+                repositories::sketch_procedure_arg_repository::get_by_procedure_id(
+                    sketch_procedure.id,
+                    connection_str.0.as_str(),
+                )
+                .unwrap()
+                .iter()
+                .map(|arg| SketchProcedureArgResponse {
+                    id: arg.id,
+                    arg_name: arg.arg_name.clone(),
+                    arg_type: arg.arg_type.clone(),
+                    name: arg.name.clone(),
+                })
+                .collect();
+        });
+
+    let sketch_datas: Vec<SketchDataResponse> =
+        repositories::sketch_data_repository::get_by_sketch_id(
+            sketch.id,
+            connection_str.0.as_str(),
+        )
+        .unwrap()
+        .iter()
+        .map(|data| SketchDataResponse {
+            id: data.id,
+            name: data.name.clone(),
+            data_name: data.data_name.clone(),
+            data_type: data.data_type.clone(),
+        })
+        .collect();
+
+    Ok(dtos::MicroControllerSketch {
+        id: sketch.id,
+        name: sketch.name,
+        code: sketch.code,
+        params: sketch_param_responses,
+        procedures: sketch_procedure_responses,
+        datas: sketch_datas
+    })
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -255,7 +348,8 @@ pub fn run() {
             create_sketch,
             get_all_sketches_full_info,
             get_sketch_code_from_new_file,
-            delete_sketch_by_id
+            delete_sketch_by_id,
+            get_micro_controller_sketch_by_id,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

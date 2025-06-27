@@ -104,9 +104,10 @@ pub struct SketchFullInfo {
 }
 
 #[derive(Serialize)]
-pub struct SketchInfo {
+pub struct MicroControllerSketch {
     pub id: i64,
     pub name: String,
+    pub code: String,
     pub params: Vec<SketchParamResponse>,
     pub procedures: Vec<SketchProcedureResponse>,
     pub datas: Vec<SketchDataResponse>,

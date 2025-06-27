@@ -43,9 +43,10 @@ export type SketchFullInfo = {
     datas: SketchData[];
 }
 
-export type SketchInfo = {
+export type MicroControllerSketch = {
     id: number;
     name: string;
+    code: string;
     params: SketchParam[];
     procedures: SketchProcedure[];
     datas: SketchData[];

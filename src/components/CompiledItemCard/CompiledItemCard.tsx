@@ -6,11 +6,12 @@ import SecondaryButton from '../../ui/buttons/SecondaryButton/SecondaryButton';
 type CompiledItemCardProps = {
     name: string,
     description: string,
-    deleteCallback: () => void,
+    deleteCallback?: () => void,
+    selectItemCallback?: () => void,
     children: React.ReactNode
 }
 
-const CompiledItemCard: React.FC<CompiledItemCardProps> = ({ name, description, deleteCallback, children }) => {
+const CompiledItemCard: React.FC<CompiledItemCardProps> = ({ name, description, deleteCallback, selectItemCallback, children }) => {
     const [showMoreFlag, setShowMoreFlag] = useState<boolean>(false);
 
     return (
@@ -19,7 +20,8 @@ const CompiledItemCard: React.FC<CompiledItemCardProps> = ({ name, description, 
             <p>{description}</p>
             <div className={classes.ButtonPanel}>
                 <AccentButton onClick={() => setShowMoreFlag(!showMoreFlag)}>{showMoreFlag ? "Скрыть подробности" : "Подробная информация"}</AccentButton>
-                <SecondaryButton onClick={() => deleteCallback()}>Удалить</SecondaryButton>
+                {deleteCallback && <SecondaryButton onClick={() => deleteCallback()}>Удалить</SecondaryButton>}
+                {selectItemCallback && <AccentButton onClick={() => selectItemCallback()}>Выбрать</AccentButton>}
             </div>
             <div>
                 {

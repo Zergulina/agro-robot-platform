@@ -16,7 +16,7 @@ export const NewSketchContextProvider = ({children} : {children : ReactNode}) =>
             {children}
         </NewSketchContext.Provider>
     );
-};
+}
 
 export const useNewSketch = () => {
   const context = useContext(NewSketchContext);
@@ -24,4 +24,4 @@ export const useNewSketch = () => {
     throw new Error('useSketch must be used within a SketchProvider');
   }
   return context;
-};
+}

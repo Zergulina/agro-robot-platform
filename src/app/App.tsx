@@ -9,6 +9,8 @@ import SketchManagerPage from "../pages/SketchManagerPage/SketchManagerPage";
 import ModuleManagerPage from "../pages/ModuleManagerPage/ModuleManagerPage";
 import AddSketchPage from "../pages/AddSketchPage/AddSketchPage";
 import { NewSketchContextProvider } from "../storage/NewSketchContextProvider";
+import { MicroControllerProvider } from "../storage/SelectedMicroControllerProvider";
+import SelectSketchPage from "../pages/SelectSketchPage/SelectSketchPage";
 
 
 function App() {
@@ -27,20 +29,23 @@ function App() {
 
   return (
     <NewSketchContextProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AppTitle />}>
-            <Route index element={<WorkPage />} />
-          </Route>
-          <Route path="optional" element={<OptionalAppTitle />}>
-            <Route path="sketch-manager">
-              <Route index element={<SketchManagerPage />} />
-              <Route path="add" element={<AddSketchPage />} />
+      <MicroControllerProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<AppTitle />}>
+              <Route index element={<WorkPage />} />
             </Route>
-            <Route path="module-manager" element={<ModuleManagerPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            <Route path="optional" element={<OptionalAppTitle />}>
+              <Route path="sketch-manager">
+                <Route index element={<SketchManagerPage />} />
+                <Route path="add" element={<AddSketchPage />} />
+                <Route path="select" element={<SelectSketchPage />} />
+              </Route>
+              <Route path="module-manager" element={<ModuleManagerPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </MicroControllerProvider>
     </NewSketchContextProvider>
   );
 }

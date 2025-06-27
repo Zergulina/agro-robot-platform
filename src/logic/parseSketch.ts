@@ -30,7 +30,7 @@ const parseParam = (line: string, lineIndex: number): SketchParam => {
         }
         else if (splitLine[i].toUpperCase().startsWith("LIST")) {
             let listValues = splitLine[i].substring(5);
-            const values = [...listValues.substring(1, listValues.length - 1).matchAll(/[^(,\s*)]+/g)].map(match => match[0])
+            const values = [...listValues.substring(1, listValues.length - 1).matchAll(/("([^"]|\\")*")|[^\s",]+/g)].map(match => match[0][0] == "\"" ? match[0].substring(1, match[0].length - 1) : match[0])
             values.forEach(value => {
                 sketchParam.value_list.push({ id: 0, value });
             });
@@ -92,6 +92,7 @@ const parseProcedure = (line: string, nextLine: string, lineIndex: number): Sket
             .map(arg => {
                 const argMatch = arg.match(/(\w+)\s+(\w+)/);
                 if (argMatch) {
+                    if(!["bool", "int", "float"].includes(argMatch[1])) throw new Error(`Недопустимый тип данных аргумента процедуры, строка ${lineIndex + 2}`)
                     return {
                         type: argMatch[1],
                         name: argMatch[2]

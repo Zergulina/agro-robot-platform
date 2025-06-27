@@ -5,12 +5,13 @@ import classes from './SketchCard.module.css'
 
 type SketchCardProps = {
     sketch: SketchFullInfo;
-    deleteCallback: () => void;
+    deleteCallback?: () => void;
+    selectItemCallback?: () => void;
 }
 
-const SketchCard: React.FC<SketchCardProps> = ({ sketch, deleteCallback }) => {
+const SketchCard: React.FC<SketchCardProps> = ({ sketch, deleteCallback, selectItemCallback }) => {
     return (
-        <CompiledItemCard name={sketch.name} description={sketch.description} deleteCallback={deleteCallback}>
+        <CompiledItemCard name={sketch.name} description={sketch.description} deleteCallback={deleteCallback} selectItemCallback={selectItemCallback}>
             <div className={classes.SketchCard}>
                 <h4>Параметры</h4>
                 <ul>
