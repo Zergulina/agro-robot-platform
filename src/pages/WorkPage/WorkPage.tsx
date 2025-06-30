@@ -5,6 +5,7 @@ import WorkspaceSelection from '../../modules/WorkspaceSelection/WorkspaceSelect
 import { Canvas } from '../../components/Canvas/Canvas';
 import SelectedUnitInterface from '../../modules/SelectedUnitInterface/SelectedUnitInterface';
 import { DrawUnit } from '../../types/nodes/primitives/DrawUnit';
+import { MicroController } from '../../types/nodes/MicroController';
 
 
 const WorkPage: React.FC = () => {
@@ -14,6 +15,10 @@ const WorkPage: React.FC = () => {
     const [unitInterfaceWidth, setUnitInterfaceWidth] = useState(startWidth.current);
     const [workspaceContainerSize, setWorkspaceContainerSize] = useState<Size>({ width: window.innerWidth - startWidth.current, height: window.innerHeight });
     const [selectedNodeUnit, setSelectedNodeUnit] = useState<DrawUnit | null>(null);
+    const initialNodes: DrawUnit[] = [
+        new MicroController({ x: 0, y: 500 }),
+    ];
+    const nodes = useRef<DrawUnit[]>(initialNodes);
 
     useEffect(() => {
         const handleResize = () => {
@@ -27,7 +32,7 @@ const WorkPage: React.FC = () => {
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (unitIntefaceIsDragging) {
-            const newUnitInterfaceWidth = Math.min(Math.max(startWidth.current + e.clientX - startDraggingPostion, 200), 600);
+            const newUnitInterfaceWidth = Math.min(Math.max(startWidth.current + e.clientX - startDraggingPostion, 200), 550);
             setUnitInterfaceWidth(newUnitInterfaceWidth);
             setWorkspaceContainerSize({ width: window.innerWidth - newUnitInterfaceWidth, height: workspaceContainerSize.height });
         }
@@ -57,8 +62,8 @@ const WorkPage: React.FC = () => {
         <main className={`${pageClasses.Page} ${classes.WorkPage}`} onMouseMove={handleMouseMove} onMouseUp={hanleMouseUp} onMouseLeave={handleMouseLeave}>
             <SelectedUnitInterface width={unitInterfaceWidth} setIsDragging={handleSetUnitIntefaceIsDragging} selectedNodeUnit={selectedNodeUnit} />
             <div className={classes.Main} style={{ width: workspaceContainerSize.width }}>
-                <WorkspaceSelection />
-                <Canvas setSelectedNodeUnit={setSelectedNodeUnit} />
+                <WorkspaceSelection nodes={nodes.current} />
+                <Canvas nodes={nodes} setSelectedNodeUnit={setSelectedNodeUnit} panelLeftOffset={unitInterfaceWidth} />
             </div>
         </main>
     );

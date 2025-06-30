@@ -1,4 +1,10 @@
 import { ClickType } from "../ClickType";
+import { Connector } from "./Connector";
+
+export type DrawingOptions = {
+    isDrawingArrow: boolean;
+    type: string;
+}
 
 export type ClickResponse = {
     clickedUnit: DrawUnit,
@@ -16,4 +22,8 @@ export abstract class DrawUnit {
 
     abstract draw(ctx: CanvasRenderingContext2D): void;
     abstract checkIsClicked(clickPosition: Position): ClickResponse;
+    abstract compileToCpp(descripter: string[]): string
+
+    abstract get OutConnections(): Connector[]; 
+    abstract get InConnections(): Connector[]; 
 } 

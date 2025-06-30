@@ -170,6 +170,5 @@ export const parseSketch = (code: string): SketchFullInfo => {
         }
     }
 
-    console.log(sketch);
     return sketch;
 }

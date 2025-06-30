@@ -9,8 +9,8 @@ import SketchManagerPage from "../pages/SketchManagerPage/SketchManagerPage";
 import ModuleManagerPage from "../pages/ModuleManagerPage/ModuleManagerPage";
 import AddSketchPage from "../pages/AddSketchPage/AddSketchPage";
 import { NewSketchContextProvider } from "../storage/NewSketchContextProvider";
-import { MicroControllerProvider } from "../storage/SelectedMicroControllerProvider";
 import SelectSketchPage from "../pages/SelectSketchPage/SelectSketchPage";
+import { SelectSketchContextProvider } from "../storage/SelectSketchContextProvider";
 
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
 
   return (
     <NewSketchContextProvider>
-      <MicroControllerProvider>
+      <SelectSketchContextProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<AppTitle />}>
@@ -45,7 +45,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-      </MicroControllerProvider>
+        </SelectSketchContextProvider>
     </NewSketchContextProvider>
   );
 }

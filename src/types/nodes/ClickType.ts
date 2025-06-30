@@ -1,4 +1,5 @@
 export enum ClickType {
     Selectable,
-    Connector
+    Connector,
+    Arrow
 }

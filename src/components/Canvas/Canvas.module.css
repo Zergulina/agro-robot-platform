@@ -1,3 +1,86 @@
 .Canvas {
     background-color: var(--canvas-background-color);
 }
+
+.CoordPanel {
+    user-select: none;
+    position: absolute;
+    bottom: 10px;
+    width: 200px;
+    height: 50px;
+    background-color: var(--panel-color);
+    border: solid 1px var(--border-color);
+    border-radius: 5px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+}
+
+.Coords {
+    width: 90px;
+}
+
+.Icon {
+    width: 30px;
+    height: 30px;
+    color: var(--icon-color);
+    transition: color 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.Icon:hover {
+    color: var(--accent-color);
+}
+
+.ActiveIcon {
+    color: var(--accent-color);
+}
+
+.InstrumentPanel {
+    user-select: none;
+    position: absolute;
+    height: 350px;
+    width: 50px;
+    background-color: var(--panel-color);
+    border: solid 1px var(--border-color);
+    border-radius: 5px;
+    bottom: calc(50% - 175px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    gap: 10px;
+}
+
+.AlgebraNodesPanel {
+    height: 250px;
+    bottom: calc(50% - 125px);
+    gap: 0;
+    justify-content: space-between;
+}
+
+.PanelElement {
+    height: 34px;
+    width: 100%;
+    display: flex;
+}
+
+.LogicNodesPanel {
+    height: 294px;
+    bottom: calc(50% - 147px);
+    gap: 0;
+    justify-content: space-between;
+}
+
+.PanelElement div {
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+}
+
+.CompareNodesPanel {
+    height: 250px;
+    bottom: calc(50% - 125px);
+    gap: 0;
+    justify-content: space-between;
+}
