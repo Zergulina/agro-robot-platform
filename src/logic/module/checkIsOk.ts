@@ -29,26 +29,26 @@ export const CheckIsOk = (nodes: DrawUnit[]) => {
 
     if (cycles.length > 0) {
         isOk = false;
-        console.log("Проебались на циклах");
+        console.log("Ошибка на циклах");
     }
 
     for (let node of nodes) {
         if (!(node instanceof MicroController) && node.InConnections.map(x => x.sourceNode).includes(null)) {
             isOk = false;
-            console.log("Проебались на входах");
+            console.log("Ошибка на входах");
         }
     }
 
     for (let node of nodes) {
         if (!(node instanceof MicroController) && node.OutConnections.map(x => x.targetNode).includes(null)) {
             isOk = false;
-            console.log("Проебались на выходах");
+            console.log("Ошибка на выходах");
         }
     }
 
     if (!arePathsDisjointWithAllowedOverlap(nodes)) {
         isOk = false;
-        console.log("Проебались на пересечении");
+        console.log("Ошибка на пересечении");
     }
 
     const microController = nodes.filter(node =>
@@ -57,7 +57,7 @@ export const CheckIsOk = (nodes: DrawUnit[]) => {
 
     if (!checkAreGroupsFullConnectedToCommands(microController)) {
         isOk = false;
-        console.log("Проебались на процедурах");
+        console.log("Ошибка на процедурах");
     }
 
     console.log("В итоге норм?", isOk);
@@ -144,7 +144,6 @@ const getCommandsReachingConnector = (
         visited.add(node);
 
         if (node instanceof Command) {
-            console.log("-1")
             result.add(node);
         }
 
@@ -153,10 +152,8 @@ const getCommandsReachingConnector = (
         // идём “назад” по всем соединениям, где этот коннектор — targetNode
         for (const nextNode of node.InConnections.map(x => x.ownerNode).filter(x => x != null) ?? []) {
 
-            console.log("1")
             // если это выход командного узла — запомним команду
             if (nextNode instanceof Command) {
-                console.log("2")
                 result.add(nextNode);
             }
 

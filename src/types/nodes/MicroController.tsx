@@ -208,7 +208,9 @@ export class MicroController extends DrawUnit {
         return [...this._inConnectors];
     }
 
-    compileToCpp(descripter: string[]): string {
-        return ""
+    compileToCpp(descripter: string[]) {return "";};
+
+    compileToCppProcedure(descripter: string[], procedureIndex: number): string {
+        return `${this._sketchProcedures[procedureIndex].procedure_name}(${descripter.join(", ")});\n`;
     }
 }

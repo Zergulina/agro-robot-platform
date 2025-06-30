@@ -145,6 +145,6 @@ export class Command extends DrawUnit  {
             throw new Error(`Ошибка в размерности дескриптора для компиляции на С++ класса ${typeof(this)}`);
         }
 
-        return `${this.commandName}(${this._commandArgs.map(arg => arg.name).join(", ")}) {`
+        return `${this.programCommandName}(${this._commandArgs.map(arg => arg.arg_name).join(", ")}) {\n`
     }
 }
