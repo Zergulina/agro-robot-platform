@@ -15,4 +15,14 @@ export class ImplNode extends BasicBinaryOperation {
 
         return `!(${descripter[0]}) || ${descripter[1]}`
     }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "ImplNode",
+            positionX: this.position.x,
+            positionY: this.position.y,
+        }
+
+        return JSON.stringify(data);
+    }
 }

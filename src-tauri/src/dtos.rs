@@ -112,3 +112,76 @@ pub struct MicroControllerSketch {
     pub procedures: Vec<SketchProcedureResponse>,
     pub datas: Vec<SketchDataResponse>,
 }
+
+#[derive(Serialize)]
+pub struct LoadedFile {
+    pub path: String,
+    pub data: String,
+}
+
+
+#[derive(Deserialize)]
+pub struct CreateModuleCommandArgRequest {
+    pub arg_name: String,
+    pub arg_type: String,
+    pub name: String,
+}
+
+#[derive(Deserialize)]
+pub struct CreateModuleCommandRequest {
+    pub command_name: String,
+    pub name: String,
+    pub args: Vec<CreateModuleCommandArgRequest>,
+}
+
+#[derive(Deserialize)]
+pub struct CreateModuleDataRequestRequest {
+    pub data_request_name: String,
+    pub data_request_type: String,
+    pub name: String,
+}
+
+#[derive(Deserialize)]
+pub struct CreateModuleRequest {
+    pub name: String,
+    pub file_name: String,
+    pub description: String,
+    pub code: String,
+    pub commands: Vec<CreateModuleCommandRequest>,
+    pub data_requests: Vec<CreateModuleDataRequestRequest>,
+}
+
+#[derive(Serialize)]
+pub struct ModuleCommandArgResponse {
+    pub id: i64,
+    pub arg_name: String,
+    pub arg_type: String,
+    pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct ModuleCommandResponse {
+    pub id: i64,
+    pub command_name: String,
+    pub name: String,
+    pub args: Vec<ModuleCommandArgResponse>,
+}
+
+#[derive(Serialize)]
+pub struct ModuleDataRequestResponse {
+    pub id: i64,
+    pub data_request_name: String,
+    pub data_request_type: String,
+    pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct ModuleResponse {
+    pub id: i64,
+    pub name: String,
+    pub file_name: String,
+    pub code: String,
+    pub description: String,
+    pub commands: Vec<ModuleCommandResponse>,
+    pub data_requests: Vec<ModuleDataRequestResponse>,
+}

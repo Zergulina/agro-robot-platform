@@ -4,7 +4,7 @@ pub fn init(connection_str: &str) {
     let conn = Connection::open(connection_str).unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch (
+        "CREATE TABLE IF NOT EXISTS sketch (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name VARCHAR(255) NOT NULL,
             file_name VARCHAR(255) NOT NULL,
@@ -12,10 +12,11 @@ pub fn init(connection_str: &str) {
             description TEXT NOT NULL
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch_param (
+        "CREATE TABLE IF NOT EXISTS sketch_param (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             macros_name VARCHAR(255) NOT NULL,
             default_value VARCHAR(255) NOT NULL,
@@ -24,29 +25,32 @@ pub fn init(connection_str: &str) {
             sketch_id INTEGER NOT NULL REFERENCES sketch(id) ON DELETE CASCADE
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch_param_value (
+        "CREATE TABLE IF NOT EXISTS sketch_param_value (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             value VARCHAR(255),
             sketch_param_id INTEGER NOT NULL REFERENCES sketch_param(id) ON DELETE CASCADE
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch_procedure (
+        "CREATE TABLE IF NOT EXISTS sketch_procedure (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             procedure_name VARCHAR(255) NOT NULL,
             name VARCHAR(255) NOT NULL,
             sketch_id INTEGER NOT NULL REFERENCES sketch(id) ON DELETE CASCADE
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch_procedure_arg (
+        "CREATE TABLE IF NOT EXISTS sketch_procedure_arg (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             arg_name VARCHAR(255) NOT NULL,
             arg_type VARCHAR(255) NOT NULL,
@@ -54,10 +58,11 @@ pub fn init(connection_str: &str) {
             sketch_procedure_id INTEGER NOT NULL REFERENCES sketch_procedure(id) ON DELETE CASCADE
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
 
     conn.execute(
-    "CREATE TABLE IF NOT EXISTS sketch_data (
+        "CREATE TABLE IF NOT EXISTS sketch_data (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             data_name VARCHAR(255) NOT NULL,
             data_type VARCHAR(255) NOT NULL,
@@ -65,5 +70,53 @@ pub fn init(connection_str: &str) {
             sketch_id INTEGER NOT NULL REFERENCES sketch(id) ON DELETE CASCADE
         )",
         rusqlite::params![],
-    ).unwrap();
+    )
+    .unwrap();
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS module (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name VARCHAR(255) NOT NULL,
+            file_name VARCHAR(255) NOT NULL,
+            code TEXT NOT NULL,
+            description TEXT NOT NULL
+        )",
+        rusqlite::params![],
+    )
+    .unwrap();
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS module_command (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            command_name VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            module_id INTEGER NOT NULL REFERENCES module(id) ON DELETE CASCADE
+        )",
+        rusqlite::params![],
+    )
+    .unwrap();
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS module_command_arg (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            arg_name VARCHAR(255) NOT NULL,
+            arg_type VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            module_command_id INTEGER NOT NULL REFERENCES module_command(id) ON DELETE CASCADE
+        )",
+        rusqlite::params![],
+    )
+    .unwrap();
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS module_data_request (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            data_request_name VARCHAR(255) NOT NULL,
+            data_request_type VARCHAR(255) NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            module_id INTEGER NOT NULL REFERENCES module(id) ON DELETE CASCADE
+        )",
+        rusqlite::params![],
+    )
+    .unwrap();
 }

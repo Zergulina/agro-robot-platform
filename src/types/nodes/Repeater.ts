@@ -204,4 +204,17 @@ export class Repeater extends DrawUnit  {
 
         return "";
     }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "Repeater",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            isInput: this._isInput,
+            inConnectionsLength: this.InConnections.length,
+            outConnectionsLength: this.OutConnections.length,
+        }
+
+        return JSON.stringify(data);
+    }
 }

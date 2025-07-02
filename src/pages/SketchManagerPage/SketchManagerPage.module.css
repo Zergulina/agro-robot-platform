@@ -1,13 +1,7 @@
-.SearchPanel {
-    height: 35px;
-    width: 100%;
-    border-bottom: solid 1px var(--border-color);
-}
-
 .SketchManager {
     padding: 0 20px;
     width: 100%;
-    height: calc(100% - 95px);
+    height: calc(100% - 60px);
     overflow-y: auto;
     display: flex;
     flex-direction: column;

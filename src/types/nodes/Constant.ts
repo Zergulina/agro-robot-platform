@@ -86,4 +86,16 @@ export class Constant extends DrawUnit  {
 
         return `${this.constant}`
     }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "Constant",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            constant: this.constant,
+            type: this.type,
+        }
+
+        return JSON.stringify(data);
+    }
 }

@@ -44,3 +44,36 @@ pub struct SketchData {
     pub name: String,
     pub sketch_id: i64
 }
+
+#[derive(Debug)]
+pub struct Module {
+    pub id: i64,
+    pub name: String,
+    pub file_name: String,
+    pub code: String,
+    pub description: String
+}
+
+#[derive(Debug)]
+pub struct ModuleCommand {
+    pub id: i64, 
+    pub command_name: String,
+    pub name: String,
+    pub module_id: i64
+}
+#[derive(Debug)]
+pub struct ModuleCommandArg {
+    pub id: i64,
+    pub arg_name: String,
+    pub arg_type: String,
+    pub name: String,
+    pub module_command_id: i64
+}
+#[derive(Debug)]
+pub struct ModuleDataRequest {
+    pub id: i64,
+    pub data_request_name: String,
+    pub data_request_type: String,
+    pub name: String,
+    pub module_id: i64
+}

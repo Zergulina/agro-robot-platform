@@ -18,9 +18,7 @@ const SelectSketchPage: React.FC = () => {
 
     return (
         <div className={pageClasses.Page}>
-            <div className={classes.SearchPanel}>
-
-            </div>
+            
             <div className={classes.SketchManager}>
                 {
                     cards.map((card) => <SketchCard sketch={card} selectItemCallback={() => {

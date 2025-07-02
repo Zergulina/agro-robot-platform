@@ -78,7 +78,6 @@
     position: absolute;
     left: 0;
     top: 35px;
-    height: 50px;
     width: 150px;
     background-color: var(--panel-color);
     border-right: solid 1px var(--border-color);
@@ -116,4 +115,13 @@
 
 .MenuPanelItem:hover {
     background-color: var(--titlebar-icon-hover-background-color);
+}
+
+.UnactiveMenuPanelItem {
+    color: var(--unactive-text-color);
+    cursor: default;
+}
+
+.UnactiveMenuPanelItem:hover {
+    background-color: inherit;
 }

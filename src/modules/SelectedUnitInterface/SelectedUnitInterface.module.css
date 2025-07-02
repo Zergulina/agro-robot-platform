@@ -46,3 +46,12 @@
 .SelectedUnitInterfaceContainer::-webkit-scrollbar {
     width: 0px;
 }
+
+.ButtonsPanel {
+    display: flex;
+    gap: 20px;
+}
+
+.BottomButton {
+    margin-top: 20px;
+}

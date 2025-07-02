@@ -24,9 +24,6 @@ const SketchManagerPage: React.FC = () => {
 
     return (
         <div className={pageClasses.Page}>
-            <div className={classes.SearchPanel}>
-
-            </div>
             <div className={classes.SketchManager}>
                 {
                     cards.map((card) => <SketchCard sketch={card} deleteCallback={() => deleteSketchById(card.id, () => setCards([...cards].filter(c => card.id != c.id)))}/>)

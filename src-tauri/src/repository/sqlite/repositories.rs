@@ -4,3 +4,7 @@ pub mod sketch_param_value_repository;
 pub mod sketch_procedure_arg_repository;
 pub mod sketch_procedure_repository;
 pub mod sketch_repository;
+pub mod module_command_arg_repository;
+pub mod module_command_repository;
+pub mod module_data_request_repository;
+pub mod module_repository;

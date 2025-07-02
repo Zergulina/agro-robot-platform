@@ -11,6 +11,9 @@ import AddSketchPage from "../pages/AddSketchPage/AddSketchPage";
 import { NewSketchContextProvider } from "../storage/NewSketchContextProvider";
 import SelectSketchPage from "../pages/SelectSketchPage/SelectSketchPage";
 import { SelectSketchContextProvider } from "../storage/SelectSketchContextProvider";
+import { DescriptorContextProvider } from "../storage/DescriptiorContextProvider";
+import { NewModuleContextProvider } from "../storage/NewModuleContextProvider";
+import AddModulePage from "../pages/AddModulePage/AddModulePage";
 
 
 function App() {
@@ -29,23 +32,30 @@ function App() {
 
   return (
     <NewSketchContextProvider>
-      <SelectSketchContextProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<AppTitle />}>
-              <Route index element={<WorkPage />} />
-            </Route>
-            <Route path="optional" element={<OptionalAppTitle />}>
-              <Route path="sketch-manager">
-                <Route index element={<SketchManagerPage />} />
-                <Route path="add" element={<AddSketchPage />} />
-                <Route path="select" element={<SelectSketchPage />} />
-              </Route>
-              <Route path="module-manager" element={<ModuleManagerPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+      <NewModuleContextProvider>
+        <SelectSketchContextProvider>
+          <DescriptorContextProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<AppTitle />}>
+                  <Route index element={<WorkPage />} />
+                </Route>
+                <Route path="optional" element={<OptionalAppTitle />}>
+                  <Route path="sketch-manager">
+                    <Route index element={<SketchManagerPage />} />
+                    <Route path="add" element={<AddSketchPage />} />
+                    <Route path="select" element={<SelectSketchPage />} />
+                  </Route>
+                  <Route path="module-manager" >
+                    <Route index element={<ModuleManagerPage />} />
+                    <Route path="add" element={<AddModulePage />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </DescriptorContextProvider>
         </SelectSketchContextProvider>
+      </NewModuleContextProvider>
     </NewSketchContextProvider>
   );
 }

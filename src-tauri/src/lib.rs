@@ -7,9 +7,9 @@ use std::{env, fs};
 use rfd::FileDialog;
 
 use crate::dtos::{
-    CreateSketchRequest, MicroControllerSketch, NewSketchFile, SketchDataResponse, SketchFullInfo, SketchParamResponse, SketchParamValueResponse, SketchProcedureArgResponse, SketchProcedureResponse
+    CreateModuleRequest, CreateSketchRequest, LoadedFile, MicroControllerSketch, ModuleCommandArgResponse, ModuleCommandResponse, ModuleDataRequestResponse, ModuleResponse, NewSketchFile, SketchDataResponse, SketchFullInfo, SketchParamResponse, SketchParamValueResponse, SketchProcedureArgResponse, SketchProcedureResponse
 };
-use crate::models::{SketchData, SketchProcedureArg};
+use crate::models::{ModuleCommand, SketchData, SketchProcedureArg};
 use crate::repository::sqlite::repositories::{self, sketch_repository};
 
 struct DbConnection(String);
@@ -32,6 +32,64 @@ fn get_sketch_code_from_new_file() -> Result<NewSketchFile, String> {
     }
 
     Err("".to_string())
+}
+
+#[tauri::command]
+fn get_saved_data() -> Result<LoadedFile, String> {
+    let file = FileDialog::new()
+        .add_filter("Files", &["arpmod", "arpproj"])
+        .set_title("Выберите файл")
+        .pick_file();
+
+    if let Some(path) = file {
+        let contents = fs::read_to_string(&path).or(Err("Ошибка при чтении файла"))?;
+        return Ok(LoadedFile {
+            path: String::from(path.to_str().unwrap()),
+            data: contents,
+        });
+    }
+
+    Err("".to_string())
+}
+
+#[tauri::command]
+fn save_as_module(data: String) -> Result<String, String> {
+    if let Some(path) = FileDialog::new()
+        .add_filter("Module files", &["arpmod"])
+        .set_title("Выберите файл модуля")
+        .save_file()
+    {
+        std::fs::write(&path, data).or(Err("Ошибка при записи файла"))?;
+        return Ok(String::from(path.to_str().unwrap()));
+    }
+
+    Err("".to_string())
+}
+
+#[tauri::command]
+fn save_module(path: String, data: String) -> Result<(), String> {
+    std::fs::write(&path, data).or(Err("Ошибка при записи файла"))?;
+    return Ok(());
+}
+
+#[tauri::command]
+fn save_as_project(data: String) -> Result<String, String> {
+    if let Some(path) = FileDialog::new()
+        .add_filter("Module files", &["arpproj"])
+        .set_title("Выберите файл модуля")
+        .save_file()
+    {
+        std::fs::write(&path, data).or(Err("Ошибка при записи файла"))?;
+        return Ok(String::from(path.to_str().unwrap()));
+    }
+
+    Err("".to_string())
+}
+
+#[tauri::command]
+fn save_project(path: String, data: String) -> Result<(), String> {
+    std::fs::write(&path, data).or(Err("Ошибка при записи файла"))?;
+    return Ok(());
 }
 
 #[tauri::command]
@@ -327,9 +385,151 @@ fn get_micro_controller_sketch_by_id(
         code: sketch.code,
         params: sketch_param_responses,
         procedures: sketch_procedure_responses,
-        datas: sketch_datas
+        datas: sketch_datas,
     })
 }
+
+#[tauri::command]
+fn create_module(
+    create_module_request: CreateModuleRequest,
+    connection_str: tauri::State<DbConnection>,
+) -> Result<(), String> {
+    let module_id = repositories::module_repository::create(
+        &models::Module {
+            id: 0,
+            name: create_module_request.name,
+            file_name: create_module_request.file_name,
+            code: create_module_request.code,
+            description: create_module_request.description,
+        },
+        connection_str.0.as_str(),
+    )
+    .or(Err("Ошибка при добавлении модуля"))?;
+    
+    for module_command in create_module_request.commands {
+        let module_command_id = repositories::module_command_repository::create(
+            &models::ModuleCommand {
+                id: 0,
+                command_name: module_command.command_name,
+                name: module_command.name,
+                module_id: module_id,
+            },
+            connection_str.0.as_str(),
+        )
+        .or(Err("Ошибка при добавлении модуля"))?;
+
+        for module_command_arg in module_command.args {
+            repositories::module_command_arg_repository::create(
+                &models::ModuleCommandArg {
+                    id: 0,
+                    arg_name: module_command_arg.arg_name,
+                    arg_type: module_command_arg.arg_type,
+                    name: module_command_arg.name,
+                    module_command_id: module_command_id,
+                },
+                connection_str.0.as_str(),
+            )
+            .or(Err("Ошибка при добавлении модуля"))?;
+        }
+    }
+
+    for module_data in create_module_request.data_requests {
+        repositories::module_data_request_repository::create(
+            &models::ModuleDataRequest {
+                id: 0,
+                data_request_name: module_data.data_request_name,
+                data_request_type: module_data.data_request_type,
+                name: module_data.name,
+                module_id: module_id,
+            },
+            connection_str.0.as_str(),
+        )
+        .or(Err("Ошибка при добавлении модуля"))?;
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+fn get_all_modules(
+    connection_str: tauri::State<DbConnection>,
+) -> Result<Vec<dtos::ModuleResponse>, String> {
+    let modules = repositories::module_repository::get_all(connection_str.0.as_str())
+        .or(Err("Ошибка при получении модуля"))?;
+
+    let module_responses: Vec<dtos::ModuleResponse> = modules
+        .iter()
+        .map(|module| {
+            let mut module_command_responses: Vec<ModuleCommandResponse> =
+                repositories::module_command_repository::get_by_module_id(
+                    module.id,
+                    connection_str.0.as_str(),
+                )
+                .unwrap()
+                .iter()
+                .map(|command| ModuleCommandResponse {
+                    id: command.id,
+                    name: command.name.clone(),
+                    command_name: command.command_name.clone(),
+                    args: Vec::<ModuleCommandArgResponse>::new(),
+                })
+                .collect();
+
+            module_command_responses
+                .iter_mut()
+                .for_each(|module_command| {
+                    module_command.args =
+                        repositories::module_command_arg_repository::get_by_command_id(
+                            module_command.id,
+                            connection_str.0.as_str(),
+                        )
+                        .unwrap()
+                        .iter()
+                        .map(|arg| ModuleCommandArgResponse {
+                            id: arg.id,
+                            arg_name: arg.arg_name.clone(),
+                            arg_type: arg.arg_type.clone(),
+                            name: arg.name.clone(),
+                        })
+                        .collect();
+                });
+
+            let module_data_request_responses: Vec<ModuleDataRequestResponse> =
+                repositories::module_data_request_repository::get_by_module_id(
+                    module.id,
+                    connection_str.0.as_str(),
+                )
+                .unwrap()
+                .iter()
+                .map(|data| ModuleDataRequestResponse {
+                    id: data.id,
+                    name: data.name.clone(),
+                    data_request_name: data.data_request_name.clone(),
+                    data_request_type: data.data_request_type.clone(),
+                })
+                .collect();
+
+            ModuleResponse {
+                id: module.id,
+                name: module.name.clone(),
+                code: module.code.clone(),
+                file_name: module.file_name.clone(),
+                description: module.description.clone(),
+                commands: module_command_responses,
+                data_requests: module_data_request_responses,
+            }
+        })
+        .collect();
+
+    Ok(module_responses)
+}
+
+#[tauri::command]
+fn delete_module_by_id(id: i64, connection_str: tauri::State<DbConnection>) -> Result<(), String> {
+    repositories::module_repository::delete(id, connection_str.0.as_str()).or(Err("Ошибка удаления модуля"))?;
+    Ok(())
+}
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -346,10 +546,18 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             create_sketch,
+            get_saved_data,
+            save_as_module,
+            save_module,
+            save_as_project,
+            save_project,
             get_all_sketches_full_info,
             get_sketch_code_from_new_file,
             delete_sketch_by_id,
             get_micro_controller_sketch_by_id,
+            create_module,
+            get_all_modules,
+            delete_module_by_id,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

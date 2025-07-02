@@ -32,8 +32,6 @@ import { MoreEqNode } from "../../types/nodes/compare/BinaryOperations/MoreEqNod
 import { MoreNode } from "../../types/nodes/compare/BinaryOperations/MoreNode";
 import { CompareNotEqNode } from "../../types/nodes/compare/BinaryOperations/CompareNotEqNode";
 import { CompareEqNode } from "../../types/nodes/compare/BinaryOperations/CompareEqNode";
-import { AiOutlineBranches } from "react-icons/ai";
-import { BranchNode } from "../../types/nodes/BranchNode";
 import { TiArrowShuffle } from "react-icons/ti";
 import { Repeater } from "../../types/nodes/Repeater";
 import { Command } from "../../types/nodes/input/Command";
@@ -411,23 +409,6 @@ export const Canvas: React.FC<CanvasProps> = ({ setSelectedNodeUnit, panelLeftOf
                             setNewSelectedNodeName("constant");
                             newSelectedNode.current = new Constant({ x: (mousePosition.x - offset.current.x) / scale.current, y: (mousePosition.y - offset.current.y) / scale.current });
                             generateNewSketchNode.current = (position: Position) => new Constant(position);
-                        }
-                        else {
-                            setNewSelectedNodeName("");
-                            newSelectedNode.current = null;
-                            draw();
-                        }
-                        setAlgebraMenuIsShown(false);
-                        setLogicMenuIsShown(false);
-                        setCompareMenuIsShown(false);
-                    }} />
-                </TipContainer>
-                <TipContainer tip="Ветвление" tipPadding={20} tipPosition={TipPosition.Right}>
-                    <AiOutlineBranches className={`${classes.Icon} ${newSelectedNodeName == "branch" ? classes.ActiveIcon : ""}`} onClick={() => {
-                        if (newSelectedNodeName != "branch") {
-                            setNewSelectedNodeName("branch");
-                            newSelectedNode.current = new BranchNode({ x: (mousePosition.x - offset.current.x) / scale.current, y: (mousePosition.y - offset.current.y) / scale.current });
-                            generateNewSketchNode.current = (position: Position) => new BranchNode(position);
                         }
                         else {
                             setNewSelectedNodeName("");

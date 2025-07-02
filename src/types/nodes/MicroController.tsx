@@ -46,9 +46,12 @@ export class MicroController extends DrawUnit {
         return this._sketchName;
     }
     private _sketchCode: String = "";
+    get sketchCode(): String {
+        return this._sketchCode;
+    }
 
     private _sketchParams: SketchParam[] = [];
-    sketchParamValues: String[] = [];
+    sketchParamValues: string[] = [];
     private _sketchProcedures: SketchProcedure[] = [];
     private _sketchDatas: SketchData[] = [];
 
@@ -69,6 +72,14 @@ export class MicroController extends DrawUnit {
         this._sketchParams = sketch.params;
         this._sketchProcedures = sketch.procedures;
         this._sketchDatas = sketch.datas;
+
+        for (let inConnector of this._inConnectors) {
+            if (inConnector.sourceNode) inConnector.sourceNode.targetNode = null;
+        }
+
+        for (let outConnector of this._outConnectors) {
+            if (outConnector.sourceNode) outConnector.sourceNode.targetNode = null;
+        }
 
         let height = 240;
 
@@ -98,12 +109,15 @@ export class MicroController extends DrawUnit {
         }
 
         this._outConnectors = [];
+        this.sketchParamValues = this._sketchParams.map(param => param.default_value);
 
         for (let i = 0; i < this._sketchDatas.length; i++) {
             let outConnector = new Connector({ y: 20 + this.position.y + i * 2 * 20 - height / 2, x: this._position.x + 100 }, false, this);
             outConnector.type = this._sketchDatas[i].data_type;
             this._outConnectors.push(outConnector);
         }
+
+        console.log(this._sketchCode);
 
         this._height = height;
     }
@@ -208,9 +222,40 @@ export class MicroController extends DrawUnit {
         return [...this._inConnectors];
     }
 
-    compileToCpp(descripter: string[]) {return "";};
+    compileToCpp(_: string[]) { return ""; };
 
     compileToCppProcedure(descripter: string[], procedureIndex: number): string {
-        return `${this._sketchProcedures[procedureIndex].procedure_name}(${descripter.join(", ")});\n`;
+        let args = "";
+
+        if (this._sketchProcedures[procedureIndex].args.length > 0) {
+            let types: string[] = [];
+            this._sketchProcedures[procedureIndex].args.map(arg => types.push(arg.arg_type));
+            for (let i = 0; i < types.length - 1; i++) {
+                args += `${descripter[i]}, `
+            }
+
+            args += `${descripter[types.length - 1]}`
+        }
+        return `${this._sketchProcedures[procedureIndex].procedure_name}(${args});\n`;
+    }
+
+    compileToCppDataRequest(dataRequestIndex: number): string {
+        return `${this._sketchDatas[dataRequestIndex].data_name}();\n`
+    }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "MicroController",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            sketchName: this._sketchName,
+            sketchCode: this._sketchCode,
+            sketchParams: this._sketchParams,
+            sketchParamValues: this.sketchParamValues,
+            sketchProcedures: this._sketchProcedures,
+            sketchDatas: this._sketchDatas,
+        }
+
+        return JSON.stringify(data);
     }
 }

@@ -28,9 +28,13 @@ export class Connector extends DrawUnit {
 
     type: string = "";
 
-    private _ownerNode: DrawUnit;
-    get ownerNode(): DrawUnit {
+    private _ownerNode: DrawUnit | null;
+    get ownerNode(): DrawUnit | null {
         return this._ownerNode;
+    }
+
+    set ownerNode(ownerNode: DrawUnit | null) {
+        this._ownerNode = ownerNode;
     }
 
     targetNode: Connector | null = null;
@@ -168,7 +172,11 @@ export class Connector extends DrawUnit {
         return [];
     }
 
-    compileToCpp(descripter: string[]): string{
+    compileToCpp(_: string[]): string{
+        return "";
+    }
+
+    convertToSafeRecord(): string {
         return "";
     }
 }

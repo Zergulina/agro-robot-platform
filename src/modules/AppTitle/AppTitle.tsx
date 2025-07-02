@@ -6,6 +6,8 @@ import classes from './AppTitle.module.css'
 import { Outlet } from 'react-router-dom';
 import DropdownMenu from '../../ui/separators/DropdownMenu/DropdownMenu';
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { FileType, useDescriptor } from '../../storage/DescriptiorContextProvider';
+import { emit } from '@tauri-apps/api/event';
 
 const AppTitle: React.FC = () => {
     const [appWindow, _] = useState(Window.getCurrent());
@@ -13,6 +15,7 @@ const AppTitle: React.FC = () => {
     const [filePanelIsOpen, setFilePanelIsOpen] = useState<boolean>(false);
     const [instrumentPanelIsOpen, setInstrumentPanelIsOpen] = useState<boolean>(false);
     useTheme();
+    const { descriptor, setDescriptor } = useDescriptor();
 
     useEffect(() => {
         appWindow.isMaximized().then(resp => setMaximizedFlag(resp));
@@ -43,14 +46,36 @@ const AppTitle: React.FC = () => {
                         setIsOpen={setFilePanelIsOpen}
                     >
                         <div className={classes.FileMenuPanel}>
-                            Aboba
+                            <button className={classes.MenuPanelItem} onClick={() => {
+                                setDescriptor({ filePath: "", fileType: FileType.Module });
+                                emit("new-module")
+                            }}>Новый модуль</button>
+                            <button className={classes.MenuPanelItem} onClick={() => {
+                                emit("load-file")
+                            }}>Загрузить файл</button>
+                            <button className={`${classes.MenuPanelItem} ${descriptor?.filePath ? "" : classes.UnactiveMenuPanelItem}`} onClick={() => {
+                                if (!descriptor?.filePath) return;
+                                if (descriptor.fileType == FileType.Module) {
+                                    emit("save-module")
+                                } else if (descriptor.fileType == FileType.Project) {
+                                    emit("save-project")
+                                }
+                            }}>Сохранить</button>
+                            <button className={`${classes.MenuPanelItem} ${descriptor?.fileType != null ? "" : classes.UnactiveMenuPanelItem}`} onClick={() => {
+                                if (descriptor?.fileType == null) return;
+                                if (descriptor.fileType == FileType.Module) {
+                                    emit("save-as-module")
+                                } else if (descriptor.fileType == FileType.Project) {
+                                    emit("save-as-project")
+                                }
+                            }}>Сохранить как...</button>
                         </div>
                     </DropdownMenu>
                     <DropdownMenu
                         className={classes.MenuButtonWrapper}
                         buttonClassName={classes.MenuButton}
                         buttonContent={
-                            <div className={classes.TitleMenuItem}>
+                            <div className={classes.TitleMenuItem} >
                                 Инструменты
                             </div>
                         }
@@ -68,7 +93,16 @@ const AppTitle: React.FC = () => {
                                 w.once('tauri://created', () => console.log('OK'));
                                 w.once('tauri://error', e => console.error(e));
                             }}>Менеджер скетчей</button>
-                            <button className={classes.MenuPanelItem}>Менеджер модулей</button>
+                            <button className={classes.MenuPanelItem} onClick={() => {
+                                const w = new WebviewWindow('optional', {
+                                    url: 'optional/module-manager',
+                                    width: 600, height: 400,
+                                    decorations: false,
+                                });
+
+                                w.once('tauri://created', () => console.log('OK'));
+                                w.once('tauri://error', e => console.error(e));
+                            }}>Менеджер модулей</button>
                         </div>
                     </DropdownMenu>
                 </div>

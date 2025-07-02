@@ -9,7 +9,7 @@ export type CommandArgument = {
     type: string;
 }
 
-export class Command extends DrawUnit  {
+export class Command extends DrawUnit {
     get position(): Position {
         return this._position;
     }
@@ -142,9 +142,27 @@ export class Command extends DrawUnit  {
 
     compileToCpp(descripter: string[]): string {
         if (descripter.length != 0) {
-            throw new Error(`Ошибка в размерности дескриптора для компиляции на С++ класса ${typeof(this)}`);
+            throw new Error(`Ошибка в размерности дескриптора для компиляции на С++ класса ${typeof (this)}`);
         }
 
-        return `${this.programCommandName}(${this._commandArgs.map(arg => arg.arg_name).join(", ")}) {\n`
+        let args: string[] = []
+        for (let i = 0; i < this._commandArgs.length; i++) {
+            args.push(`${this._commandArgs[i].type} ${this._commandArgs[i].arg_name}`)
+        }
+
+        return `void ${this.programCommandName}(${args.join(", ")}) {\n`
+    }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "Command",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            commandArgs: this._commandArgs,
+            commandName: this.commandName,
+            programCommandName: this.programCommandName,
+        }
+
+        return JSON.stringify(data);
     }
 }

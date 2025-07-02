@@ -28,7 +28,6 @@ import { MoreEqNode } from '../../types/nodes/compare/BinaryOperations/MoreEqNod
 import { LessNode } from '../../types/nodes/compare/BinaryOperations/LessNode';
 import { LessEqNode } from '../../types/nodes/compare/BinaryOperations/LessEqNode';
 import { Constant } from '../../types/nodes/Constant';
-import { BranchNode } from '../../types/nodes/BranchNode';
 import { Repeater } from '../../types/nodes/Repeater';
 import { Command, CommandArgument } from '../../types/nodes/input/Command';
 import { DataRequest } from '../../types/nodes/output/DataRequest';
@@ -67,7 +66,8 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
         if (selectedNodeUnit instanceof MicroController) {
             setInterfaceData({
                 sketchName: selectedNodeUnit.sketchName,
-                paramShowMoreInfoFlag: Array(selectedNodeUnit.sketchParams.length).fill(false)
+                paramShowMoreInfoFlag: Array(selectedNodeUnit.sketchParams.length).fill(false),
+                paramValues: selectedNodeUnit.sketchParamValues
             });
             setSelectedSketch(null);
             setSelectedSketchId(null);
@@ -121,7 +121,8 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
             selectedNodeUnit.setSketch(selectedSketch);
             setInterfaceData({
                 sketchName: selectedSketch.name,
-                paramShowMoreInfoFlag: Array(selectedSketch.params.length).fill(false)
+                paramShowMoreInfoFlag: Array(selectedSketch.params.length).fill(false),
+                paramValues: selectedNodeUnit.sketchParamValues
             });
         }
         setSelectedSketchId(selectedSketch?.id || null);
@@ -160,13 +161,19 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                     {
                         <ul>
                             {
-                                node.sketchParams.length > 0 && interfaceData.paramShowMoreInfoFlag ?
+                                interfaceData.paramValues && node.sketchParams.length > 0 && interfaceData.paramShowMoreInfoFlag ?
                                     <div>
                                         {
                                             node.sketchParams.map((param, index) =>
                                                 <li>
                                                     <div>
-                                                        <p>{param.name}</p>
+                                                        <p>{param.name}</p> <input value={interfaceData.paramValues[index]} onChange={(e) => {
+                                                            let newParamValues = [...interfaceData.paramValues]
+                                                            newParamValues[index] = e.target.value;
+                                                            console.log(newParamValues)
+                                                            setInterfaceData({ ...interfaceData, paramValues: newParamValues })
+                                                            node.sketchParamValues = newParamValues;
+                                                        }} />
                                                         <AccentButton onClick={() => {
                                                             let newParamShowMoreInfoFlag = [...interfaceData.paramShowMoreInfoFlag];
                                                             newParamShowMoreInfoFlag[index] = !newParamShowMoreInfoFlag[index];
@@ -319,32 +326,38 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                 <div>
                     <h3 className={classes.SelectedNodeTitle}>Логическое И</h3>
                     <p>Входы: {interfaceData.inConnectorsLength}</p>
-                    <AccentButton onClick={() => {
-                        node.addInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Добавить</AccentButton>
-                    <SecondaryButton onClick={() => {
-                        node.removeInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Удалить</SecondaryButton>
+                    <div className={classes.ButtonsPanel}>
+                        <AccentButton onClick={() => {
+                            node.addInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Добавить</AccentButton>
+                        <p> </p>
+                        <SecondaryButton onClick={() => {
+                            node.removeInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Удалить</SecondaryButton>
+                    </div>
                 </div>);
         else if (node instanceof OrNode)
             return (
                 <div>
                     <h3 className={classes.SelectedNodeTitle}>Логическое ИЛИ</h3>
                     <p>Входы: {interfaceData.inConnectorsLength}</p>
-                    <AccentButton onClick={() => {
-                        node.addInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Добавить</AccentButton>
-                    <SecondaryButton onClick={() => {
-                        node.removeInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Удалить</SecondaryButton>
+                    <div className={classes.ButtonsPanel}>
+                        <AccentButton onClick={() => {
+                            node.addInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Добавить</AccentButton>
+                        <p> </p>
+                        <SecondaryButton onClick={() => {
+                            node.removeInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Удалить</SecondaryButton>
+                    </div>
                 </div>
             );
         else if (node instanceof NorNode)
@@ -352,16 +365,19 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                 <div>
                     <h3 className={classes.SelectedNodeTitle}>Логическое НЕ ИЛИ</h3>
                     <p>Входы: {interfaceData.inConnectorsLength}</p>
-                    <AccentButton onClick={() => {
-                        node.addInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Добавить</AccentButton>
-                    <SecondaryButton onClick={() => {
-                        node.removeInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Удалить</SecondaryButton>
+                    <div className={classes.ButtonsPanel}>
+                        <AccentButton onClick={() => {
+                            node.addInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Добавить</AccentButton>
+                        <p> </p>
+                        <SecondaryButton onClick={() => {
+                            node.removeInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Удалить</SecondaryButton>
+                    </div>
                 </div>
             );
         else if (node instanceof NandNode)
@@ -369,16 +385,19 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                 <div>
                     <h3 className={classes.SelectedNodeTitle}>Логическое НЕ ИЛИ</h3>
                     <p>Входы: {interfaceData.inConnectorsLength}</p>
-                    <AccentButton onClick={() => {
-                        node.addInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Добавить</AccentButton>
-                    <SecondaryButton onClick={() => {
-                        node.removeInConnector();
-                        setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
-                        emit("canvas-draw");
-                    }}>Удалить</SecondaryButton>
+                    <div className={classes.ButtonsPanel}>
+                        <AccentButton onClick={() => {
+                            node.addInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Добавить</AccentButton>
+                        <p> </p>
+                        <SecondaryButton onClick={() => {
+                            node.removeInConnector();
+                            setInterfaceData({ ...interfaceData, inConnectorsLength: node.inConnectorsLength })
+                            emit("canvas-draw");
+                        }}>Удалить</SecondaryButton>
+                    </div>
                 </div>
             );
         else if (node instanceof XorNode)
@@ -472,33 +491,30 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                     </div>
                 </div>
             );
-        else if (node instanceof BranchNode)
-            return (
-                <div>
-                    <h3 className={classes.SelectedNodeTitle}>Ветвление</h3>
-                </div>
-            );
         else if (node instanceof Repeater)
             return (
                 <div>
                     <h3 className={classes.SelectedNodeTitle}>Повторитель</h3>
                     <p>{interfaceData.isInput ? "Входы" : "Выходы"}: {interfaceData.connectorsLength}</p>
-                    <AccentButton onClick={() => {
-                        node.addConnector();
-                        setInterfaceData({ ...interfaceData, connectorsLength: node.connectorsLength })
-                        emit("canvas-draw");
-                    }}>Добавить</AccentButton>
-                    <SecondaryButton onClick={() => {
-                        node.removeConnector();
-                        setInterfaceData({ ...interfaceData, connectorsLength: node.connectorsLength })
-                        emit("canvas-draw");
-                    }}>Удалить</SecondaryButton>
-                    <p>Режим</p>
-                    <AccentButton onClick={() => {
-                        setInterfaceData({...interfaceData, isInput: !node.isInput})
-                        node.isInput = !node.isInput;
-                        emit("canvas-draw");
-                    }}>{interfaceData.isInput ? "Входы" : "Выходы"}</AccentButton>
+                    <div className={classes.ButtonsPanel}>
+                        <AccentButton onClick={() => {
+                            node.addConnector();
+                            setInterfaceData({ ...interfaceData, connectorsLength: node.connectorsLength })
+                            emit("canvas-draw");
+                        }}>Добавить</AccentButton>
+                        <p> </p>
+                        <SecondaryButton onClick={() => {
+                            node.removeConnector();
+                            setInterfaceData({ ...interfaceData, connectorsLength: node.connectorsLength })
+                            emit("canvas-draw");
+                        }}>Удалить</SecondaryButton>
+                        <p>Режим</p>
+                        <AccentButton onClick={() => {
+                            setInterfaceData({ ...interfaceData, isInput: !node.isInput })
+                            node.isInput = !node.isInput;
+                            emit("canvas-draw");
+                        }}>{interfaceData.isInput ? "Входы" : "Выходы"}</AccentButton>
+                    </div>
                 </div>
             );
         else if (node instanceof Command)
@@ -575,16 +591,18 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                                         <>Отсутствуют</>
                                 }
                             </ol>
-                            <AccentButton onClick={() => {
-                                node.addCommandArg();
-                                setInterfaceData({ ...interfaceData, commandArgs: node.commandArgs })
-                                emit("canvas-draw");
-                            }}>Добавить</AccentButton>
-                            <SecondaryButton onClick={() => {
-                                node.removeCommandArg();
-                                setInterfaceData({ ...interfaceData, commandArgs: node.commandArgs })
-                                emit("canvas-draw");
-                            }}>Удалить</SecondaryButton>
+                            <div className={classes.ButtonsPanel}>
+                                <AccentButton onClick={() => {
+                                    node.addCommandArg();
+                                    setInterfaceData({ ...interfaceData, commandArgs: node.commandArgs })
+                                    emit("canvas-draw");
+                                }}>Добавить</AccentButton>
+                                <SecondaryButton onClick={() => {
+                                    node.removeCommandArg();
+                                    setInterfaceData({ ...interfaceData, commandArgs: node.commandArgs })
+                                    emit("canvas-draw");
+                                }}>Удалить</SecondaryButton>
+                            </div>
                         </>
                             :
                             <></>
@@ -659,7 +677,6 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                             :
                             <></>
                     }
-                    <p>Тип данных: {node.type == "" ? "Не void" : node.type}</p>
                 </div>
             )
         else
@@ -676,6 +693,14 @@ const SelectedUnitInterface: React.FC<SelectedUnitInterfaceProps> = ({ width, se
                 <div>
                     {renderSelectedNode(selectedNodeUnit)}
                 </div>
+                {
+                    selectedNodeUnit && !(selectedNodeUnit instanceof Connector) && !(selectedNodeUnit instanceof MicroController) ?
+                        <div className={classes.BottomButton}>
+                            <SecondaryButton onClick={() => emit("delete-node", selectedNodeUnit.uuid)}>Удалить элемент</SecondaryButton>
+                        </div>
+                        :
+                        <></>
+                }
             </div>
         </div>
     );

@@ -9,10 +9,21 @@ export class OrNode extends BasicMultiConnectionOperation  {
     }
 
     compileToCpp(descripter: string[]): string {
-        if (descripter.length != 2) {
+        if (descripter.length != this.InConnections.length) {
             throw new Error(`Ошибка в размерности дескриптора для компиляции на С++ класса ${typeof (this)}`);
         }
 
         return descripter.join(" || ")
+    }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "OrNode",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            inConnectionsLength: this.InConnections.length,
+        }
+
+        return JSON.stringify(data);
     }
 }

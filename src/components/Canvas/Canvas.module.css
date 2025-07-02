@@ -6,7 +6,7 @@
     user-select: none;
     position: absolute;
     bottom: 10px;
-    width: 200px;
+    width: 150px;
     height: 50px;
     background-color: var(--panel-color);
     border: solid 1px var(--border-color);
@@ -39,12 +39,12 @@
 .InstrumentPanel {
     user-select: none;
     position: absolute;
-    height: 350px;
+    height: 300px;
     width: 50px;
     background-color: var(--panel-color);
     border: solid 1px var(--border-color);
     border-radius: 5px;
-    bottom: calc(50% - 175px);
+    bottom: calc(50% - 150px);
     display: flex;
     flex-direction: column;
     align-items: center;

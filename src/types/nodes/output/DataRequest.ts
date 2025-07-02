@@ -90,8 +90,21 @@ export class DataRequest extends DrawUnit {
             throw new Error(`Ошибка в размерности дескриптора для компиляции на С++ класса ${typeof (this)}`);
         }
 
-        let result = `uint8_t *p = (uint8_t*)&${descripter[0]};\nWire.write(p, sizeof(${descripter[0]}))\n`
+        let result = `\tuint8_t *p = (uint8_t*)&${descripter[0]};\n\tWire.write(p, sizeof(${descripter[0]}));\n`
 
         return result
+    }
+
+    convertToSafeRecord(): string {
+        const data = {
+            nodeType: "DataRequest",
+            positionX: this.position.x,
+            positionY: this.position.y,
+            dataRequestName: this.dataRequestName,
+            programDataRequestName: this.programDataRequestName,
+            type: this.type,
+        }
+
+        return JSON.stringify(data);
     }
 }

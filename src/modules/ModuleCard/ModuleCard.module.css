@@ -1,0 +1,16 @@
+.ModuleCard li {
+    position: relative;
+    padding-left: 20px;
+}
+
+.ModuleCard li::before{
+    position: absolute;
+    content: "";
+    background-color: var(--accent-color);
+    width: 7px;
+    height: 7px;
+    top: 8px;
+    left: 2px;
+    z-index: 999;
+    border-radius: 50%;
+}
